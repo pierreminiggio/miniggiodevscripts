@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 // On récupère les ids
 let ids = require('./ids.js');
 
-const pullPosts = async (ids) => {
+const pullPost = async (ids) => {
 
   // Créer une instance de navigateur
   const browser = await puppeteer.launch({ headless: true });
@@ -14,15 +14,14 @@ const pullPosts = async (ids) => {
   await page.goto(ids.url);
 
   // Récupérer les données
-  var posts = await page.evaluate(() => {
-    let posts = document.querySelector('body').innerHTML;
-    return JSON.parse(posts);
+  var post = await page.evaluate(() => {
+    let daPost = document.querySelector('pre').innerHTML;
+    return JSON.parse(daPost);
   });
-  
 
   // Retourner les données (et fermer le navigateur)
   browser.close();
-  return posts;
+  return post;
 }
 
 const postToPage = async (ids, qualityContent) => {
@@ -63,26 +62,29 @@ const postToPage = async (ids, qualityContent) => {
   // click submit
   await page.click('button[data-testid="react-composer-post-button"][type="submit"]');
 
+   await page.waitFor(3000); // fait une pause de 3 secondes
+
   // Retourner les données (et fermer le navigateur)
   browser.close();
   return [];
 }
 
 function letsGo () {
-  console.log('Récupération des posts');
+  console.log('Récupération du post');
 
-  // Appelle la fonction pullPosts() et affichage les données retournées
-  pullPosts(ids).then(posts => {
-    var qualityContent = '';
-    var i = 0;
-    for (let [key, value] of Object.entries(posts)) {
-      qualityContent += value.texte_brut;
+  // Appelle la fonction pullPost() et affichage les données retournées
+  pullPost(ids).then(post => {
+    console.log('post récupéré');
+    if (post.text != undefined) {
+      var qualityContent = post.text;
+      console.log(qualityContent);
+
+      // Postage sur la meilleure page de shitposting
+      postToPage(ids, qualityContent).then(result => {
+        console.log('post posté');
+      });
+
     }
-
-    // Postage sur le groupe des boosted
-    postToPage(ids, qualityContent).then(result => {
-
-    });
   });
 }
 
