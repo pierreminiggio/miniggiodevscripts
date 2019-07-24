@@ -1,0 +1,29 @@
+<head>
+	<meta charset="UTF-8">
+	<script
+  		src="https://code.jquery.com/jquery-3.4.1.min.js"
+  		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  		crossorigin="anonymous"></script>
+	<script src="./ajaxUrl.js"></script>
+    <script src="./posts.js"></script>
+	<script>
+		console.log(data);
+		$.ajax({
+	        url: ajaxUrl,
+	        method: "POST",
+	        data: {
+	        	posts: data
+	        },
+	        success: function (response)  {
+	        	document.querySelector("body").innerHTML = response;
+	       	},
+	       	error: function () {
+	        	alert("error");
+	       	}
+	    });
+
+	</script>
+</head>
+<body>
+	test	
+</body>
